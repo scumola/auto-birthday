@@ -63,6 +63,9 @@ class MainActivity : AppCompatActivity() {
         observeContacts()
 
         checkPermissions()
+
+        // Side-load self-update: prompt if a newer APK is published on badcheese.com.
+        UpdateChecker.check(this)
     }
 
     private fun setupRecyclerView() {
@@ -160,8 +163,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadContactsIfEmpty() {
         lifecycleScope.launch {
+            // Check for ANY contacts, not just enabled ones — we only want to auto-scan
+            // on first launch (truly empty DB). Using getEnabledContacts() would trigger
+            // a rescan whenever all contacts happen to be disabled, wiping their saved states.
             val contacts = withContext(Dispatchers.IO) {
-                database.contactDao().getEnabledContacts()
+                database.contactDao().getAllContactsSync()
             }
             if (contacts.isEmpty()) {
                 rescanContacts()

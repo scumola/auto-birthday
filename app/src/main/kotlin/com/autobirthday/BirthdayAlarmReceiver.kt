@@ -36,31 +36,30 @@ class BirthdayAlarmReceiver : BroadcastReceiver() {
         val birthdayContacts = contactDao.getTodaysBirthdays(todayDate)
 
         if (birthdayContacts.isEmpty()) {
-            Log.d("BirthdayAlarm", "No birthdays today")
-            return
-        }
+            Log.d("BirthdayAlarm", "No birthdays today ($todayDate)")
+        } else {
+            val settings = settingsDao.getSettingsSync() ?: AppSettings()
+            val message = settings.messageTemplate
 
-        val settings = settingsDao.getSettingsSync() ?: AppSettings()
-        val message = settings.messageTemplate
+            val smsManager = context.getSystemService(SmsManager::class.java)
 
-        val smsManager = context.getSystemService(SmsManager::class.java)
-
-        for (contact in birthdayContacts) {
-            try {
-                smsManager.sendTextMessage(
-                    contact.phoneNumber,
-                    null,
-                    message,
-                    null,
-                    null
-                )
-                Log.d("BirthdayAlarm", "Sent birthday SMS to ${contact.name}")
-            } catch (e: Exception) {
-                Log.e("BirthdayAlarm", "Failed to send SMS to ${contact.name}: ${e.message}")
+            for (contact in birthdayContacts) {
+                try {
+                    smsManager.sendTextMessage(
+                        contact.phoneNumber,
+                        null,
+                        message,
+                        null,
+                        null
+                    )
+                    Log.d("BirthdayAlarm", "Sent birthday SMS to ${contact.name}")
+                } catch (e: Exception) {
+                    Log.e("BirthdayAlarm", "Failed to send SMS to ${contact.name}: ${e.message}")
+                }
             }
         }
 
-        // Reschedule for tomorrow
+        // Always reschedule for tomorrow
         AlarmScheduler.scheduleNextAlarm(context)
     }
 

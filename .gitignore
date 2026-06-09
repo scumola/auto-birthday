@@ -1,3 +1,6 @@
+*.jks
+*.keystore
+keystore.properties
 *.iml
 .gradle
 /local.properties
@@ -18,3 +21,7 @@ out/
 build/
 local.properties
 *.log
+
+# Local helper scripts — contain credentials / machine-specific launchers, keep off GitHub
+deploy.sh
+start_claude.sh

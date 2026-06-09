@@ -14,6 +14,7 @@ class ContactScanner(private val context: Context) {
 
         val projection = arrayOf(
             ContactsContract.Contacts._ID,
+            ContactsContract.Contacts.LOOKUP_KEY,
             ContactsContract.Contacts.DISPLAY_NAME,
             ContactsContract.Contacts.HAS_PHONE_NUMBER
         )
@@ -29,23 +30,28 @@ class ContactScanner(private val context: Context) {
         cursor?.use { contactCursor ->
             while (contactCursor.moveToNext()) {
                 val idIndex = contactCursor.getColumnIndex(ContactsContract.Contacts._ID)
+                val lookupKeyIndex = contactCursor.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)
                 val nameIndex = contactCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
                 val hasPhoneIndex = contactCursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)
 
-                if (idIndex < 0 || nameIndex < 0 || hasPhoneIndex < 0) continue
+                if (idIndex < 0 || lookupKeyIndex < 0 || nameIndex < 0 || hasPhoneIndex < 0) continue
 
-                val contactId = contactCursor.getString(idIndex)
+                // Use _ID only for sub-queries (birthday/phone lookups) — it's needed for
+                // ContentResolver joins. We store LOOKUP_KEY as our primary key because _ID
+                // can change after Google sync or contact merges, wiping saved enabled states.
+                val rawId = contactCursor.getString(idIndex)
+                val lookupKey = contactCursor.getString(lookupKeyIndex) ?: continue
                 val name = contactCursor.getString(nameIndex) ?: continue
                 val hasPhone = contactCursor.getInt(hasPhoneIndex) > 0
 
-                android.util.Log.d("ContactScanner", "Checking contact: $name (ID: $contactId)")
+                android.util.Log.d("ContactScanner", "Checking contact: $name (lookup: $lookupKey)")
 
                 if (!hasPhone) {
                     android.util.Log.d("ContactScanner", "  -> Skipped: No phone number flag")
                     continue
                 }
 
-                val birthday = getBirthday(contentResolver, contactId)
+                val birthday = getBirthday(contentResolver, rawId)
                 if (birthday.isNullOrEmpty()) {
                     android.util.Log.d("ContactScanner", "  -> Skipped: No birthday found")
                     continue
@@ -53,7 +59,7 @@ class ContactScanner(private val context: Context) {
 
                 android.util.Log.d("ContactScanner", "  -> Birthday found: $birthday")
 
-                val phoneNumber = getPhoneNumber(contentResolver, contactId)
+                val phoneNumber = getPhoneNumber(contentResolver, rawId)
                 if (phoneNumber.isNullOrEmpty()) {
                     android.util.Log.d("ContactScanner", "  -> Skipped: No phone number retrieved")
                     continue
@@ -63,7 +69,7 @@ class ContactScanner(private val context: Context) {
 
                 contacts.add(
                     ContactEntity(
-                        contactId = contactId,
+                        contactId = lookupKey,
                         name = name,
                         phoneNumber = phoneNumber,
                         birthdayDate = birthday,
