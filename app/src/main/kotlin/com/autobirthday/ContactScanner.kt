@@ -2,6 +2,7 @@ package com.autobirthday
 
 import android.content.ContentResolver
 import android.content.Context
+import android.net.Uri
 import android.provider.ContactsContract
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -80,6 +81,28 @@ class ContactScanner(private val context: Context) {
         }
 
         contacts
+    }
+
+    // Map a saved LOOKUP_KEY to the contact's *current* LOOKUP_KEY. The key is a "."-joined
+    // list with one segment per linked account (Google, Signal, Telegram...), and apps like
+    // Telegram periodically delete and recreate their raw contacts, which changes their segment
+    // and therefore the whole key. The provider's lookup URI matches on whichever segments are
+    // still valid, so a stale key still finds the right contact. Returns null if the contact is gone.
+    suspend fun resolveCurrentLookupKey(storedKey: String): String? = withContext(Dispatchers.IO) {
+        val lookupUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI, storedKey)
+        try {
+            context.contentResolver.query(
+                lookupUri,
+                arrayOf(ContactsContract.Contacts.LOOKUP_KEY),
+                null,
+                null,
+                null
+            )?.use { if (it.moveToFirst()) it.getString(0) else null }
+        } catch (e: Exception) {
+            // The provider throws on keys it can't parse; treat that as "not found" so one bad
+            // row can't abort the whole rescan.
+            null
+        }
     }
 
     private fun getBirthday(contentResolver: ContentResolver, contactId: String): String? {

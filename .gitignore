@@ -25,3 +25,6 @@ local.properties
 # Local helper scripts — contain credentials / machine-specific launchers, keep off GitHub
 deploy.sh
 start_claude.sh
+
+# tools/diag.sh output — contains contact names/phone numbers
+diag_out/

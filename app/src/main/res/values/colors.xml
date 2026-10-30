@@ -1,10 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Palette pulled from the launcher icon: plum/magenta background, candle yellow.
+     values-night/colors.xml redefines every name for dark mode. -->
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
+    <color name="plum_background">#FFFCF7FB</color>
+    <color name="plum_surface">#FFFCF7FB</color>
+    <color name="plum_container_lowest">#FFFFFFFF</color>
+    <color name="plum_container_low">#FFF8EFF6</color>
+    <color name="plum_container">#FFF3E8F1</color>
+    <color name="plum_container_high">#FFEEE2EC</color>
+    <color name="plum_container_highest">#FFE8DBE6</color>
+    <color name="plum_on_surface">#FF2A1730</color>
+    <color name="plum_on_surface_variant">#FF6D5871</color>
+    <color name="plum_outline">#FF9C869F</color>
+    <color name="plum_outline_variant">#FFE2D3E0</color>
+
+    <color name="magenta">#FFA61E8C</color>
+    <color name="on_magenta">#FFFFFFFF</color>
+    <color name="magenta_container">#FFFFD8F0</color>
+    <color name="on_magenta_container">#FF3D0034</color>
+    <color name="mauve_container">#FFF4DDEF</color>
+    <color name="on_mauve_container">#FF2E1229</color>
+
+    <!-- Only used to mark a birthday that is today -->
+    <color name="candle">#FFFFC93C</color>
+    <color name="on_candle">#FF3A2A00</color>
+
+    <!-- Message bubble gradient, same both modes: it's the icon's background -->
+    <color name="bubble_start">#FFC2268F</color>
+    <color name="bubble_end">#FF6E2AA6</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

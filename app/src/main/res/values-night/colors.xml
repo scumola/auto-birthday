@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="plum_background">#FF170F1B</color>
+    <color name="plum_surface">#FF170F1B</color>
+    <color name="plum_container_lowest">#FF120A15</color>
+    <color name="plum_container_low">#FF1F1623</color>
+    <color name="plum_container">#FF241A28</color>
+    <color name="plum_container_high">#FF2E2433</color>
+    <color name="plum_container_highest">#FF392E3E</color>
+    <color name="plum_on_surface">#FFF2E5F2</color>
+    <color name="plum_on_surface_variant">#FFC2AEC4</color>
+    <color name="plum_outline">#FF8C788F</color>
+    <color name="plum_outline_variant">#FF4A3B4E</color>
+
+    <color name="magenta">#FFFFA8E2</color>
+    <color name="on_magenta">#FF5C0050</color>
+    <color name="magenta_container">#FF82106D</color>
+    <color name="on_magenta_container">#FFFFD8F0</color>
+    <color name="mauve_container">#FF4F3A4B</color>
+    <color name="on_mauve_container">#FFF4DDEF</color>
+
+    <color name="candle">#FFFFD25E</color>
+    <color name="on_candle">#FF3A2A00</color>
+</resources>
