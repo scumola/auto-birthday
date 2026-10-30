@@ -46,6 +46,10 @@ keys with the phone's live ones, pull the database, tap views, take screenshots.
 arguments for usage. Its output contains contact names and numbers, so it writes to the gitignored
 `diag_out/` by default.
 
+`tools/emu_sms_test.sh` runs a real send on an emulator without texting anyone: the emulator texts
+its own number, and the result is read back from its SMS provider (`boot`, `prep APK`, `send MSG`,
+`kill`; no args for usage).
+
 ## License
 
 MIT. Bundled font Unbounded is under the SIL Open Font License (`licenses/Unbounded-OFL.txt`).

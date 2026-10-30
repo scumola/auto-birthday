@@ -17,7 +17,8 @@
 #   tools/diag.sh [-s SERIAL] rescan            open the app and tap "Rescan" (phone must
 #                                               be unlocked); waits a few seconds for it to finish
 #   tools/diag.sh [-s SERIAL] tap VIEW_ID       tap the on-screen view with that resource id
-#                                               (e.g. messageBubble, changeTimeButton)
+#                                               (e.g. messageBubble, or a full id like
+#                                               android:id/button1 for a dialog's OK/Save)
 #   tools/diag.sh [-s SERIAL] shot FILE.png     save a screenshot
 #
 # SERIAL defaults to $ANDROID_SERIAL, else adb's default device (pass -s when several are attached,
@@ -89,8 +90,9 @@ rawaccounts() {
 
 tap() {
     local id="$1" xml bounds
+    [[ "$id" == *:* ]] || id="$PKG:id/$id"
     xml=$("${ADB[@]}" exec-out uiautomator dump /dev/tty 2>/dev/null)
-    bounds=$(grep -o "resource-id=\"$PKG:id/$id\"[^>]*bounds=\"[^\"]*\"" <<< "$xml" | head -1 \
+    bounds=$(grep -o "resource-id=\"$id\"[^>]*bounds=\"[^\"]*\"" <<< "$xml" | head -1 \
         | sed -n 's/.*bounds="\[\([0-9]*\),\([0-9]*\)\]\[\([0-9]*\),\([0-9]*\)\]".*/\1 \2 \3 \4/p')
     if [[ -z "$bounds" ]]; then
         echo "$id not found on screen (phone locked, or a dialog is covering the app?)" >&2

@@ -43,12 +43,17 @@ class BirthdayAlarmReceiver : BroadcastReceiver() {
 
             val smsManager = context.getSystemService(SmsManager::class.java)
 
+            // sendTextMessage only handles a single SMS: 160 GSM chars, or just 70 once the text
+            // contains an emoji (UCS-2), and longer messages fail without an error. Split it and
+            // send as multipart; a short message comes back as one part and goes out as one SMS.
+            val parts = smsManager.divideMessage(message)
+
             for (contact in birthdayContacts) {
                 try {
-                    smsManager.sendTextMessage(
+                    smsManager.sendMultipartTextMessage(
                         contact.phoneNumber,
                         null,
-                        message,
+                        parts,
                         null,
                         null
                     )
